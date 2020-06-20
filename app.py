@@ -1,6 +1,4 @@
-'''
-I'm trying to use this: https://flask-pymongo.readthedocs.io/en/latest/
-'''
+# I'm trying to use this: https://flask-pymongo.readthedocs.io/en/latest/
 
 import pandas as pd
 from flask import Flask, jsonify, request, send_file, render_template, redirect, url_for
@@ -12,7 +10,6 @@ from datetime import datetime
 import os
 import pathlib
 import hashlib
-
 
 app = Flask(__name__)
 
