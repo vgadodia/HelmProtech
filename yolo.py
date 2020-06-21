@@ -5,6 +5,7 @@ import numpy as np
 import os.path
 from glob import glob
 from detectLicensePlateImage import get_coordinates
+import tensorflow as tf
 
 frame_count = 0
 frame_count_out=0
@@ -14,7 +15,6 @@ inpWidth = 416
 inpHeight = 416
 
 helmets = []
-
 
 classesFile = "obj.names";
 classes = None
@@ -30,6 +30,8 @@ net = cv.dnn.readNet(args[3], args[1])
 net1 = cv.dnn.readNetFromDarknet(modelConfiguration, modelWeights)
 net1.setPreferableBackend(cv.dnn.DNN_BACKEND_OPENCV)
 net1.setPreferableTarget(cv.dnn.DNN_TARGET_CPU)
+graph = tf.get_default_graph()
+
 
 class Point: 
     def __init__(self, x, y): 
@@ -151,96 +153,107 @@ def postprocess(frame, outs):
 
 
 def predict(image_path):
-    license_plate_images, lx, ly = get_coordinates(image_path)
-    frame_count = 0
-    frame_count_out=0
-    confThreshold = 0.5
-    nmsThreshold = 0.4
-    inpWidth = 416
-    inpHeight = 416
-    global helmets
-    helmets = []
+    global graph
+    with graph.as_default():
+        license_plate_images, lx, ly = get_coordinates(image_path)
+        frame_count = 0
+        frame_count_out=0
+        confThreshold = 0.5
+        nmsThreshold = 0.4
+        inpWidth = 416
+        inpHeight = 416
+        global helmets
+        helmets = []
 
 
 
-    image = cv.imread(image_path)
-    Width = image.shape[1]
-    Height = image.shape[0]
-    scale = 0.00392
-    classes = None
-    with open(args[0], 'r') as f:
-        classes = [line.strip() for line in f.readlines()]
-    blob = cv.dnn.blobFromImage(image, scale, (416,416), (0,0,0), True, crop=False)
-    net.setInput(blob)
-    outs = net.forward(get_output_layers(net))
-    blob1 = cv.dnn.blobFromImage(image, 1/255, (inpWidth, inpHeight), [0,0,0], 1, crop=False)
-    net1.setInput(blob)
-    outs1 = net1.forward(get_output_layers(net1))
-    class_ids = []
-    confidences = []
-    boxes = []
-    conf_threshold = 0.5
-    nms_threshold = 0.4
-    for out in outs:
-        for detection in out:
-            scores = detection[5:]
-            class_id = np.argmax(scores)
-            confidence = scores[class_id]
-            if confidence > 0.5:
-                center_x = int(detection[0] * Width)
-                center_y = int(detection[1] * Height)
-                w = int(detection[2] * Width)
-                h = int(detection[3] * Height)
-                x = center_x - w / 2
-                y = center_y - h / 2
-                class_ids.append(class_id)
-                confidences.append(float(confidence))
-                boxes.append([x, y, w, h])
+        image = cv.imread(image_path)
+        Width = image.shape[1]
+        Height = image.shape[0]
+        scale = 0.00392
+        classes = None
+        with open(args[0], 'r') as f:
+            classes = [line.strip() for line in f.readlines()]
+        blob = cv.dnn.blobFromImage(image, scale, (416,416), (0,0,0), True, crop=False)
+        net.setInput(blob)
+        outs = net.forward(get_output_layers(net))
+        blob1 = cv.dnn.blobFromImage(image, 1/255, (inpWidth, inpHeight), [0,0,0], 1, crop=False)
+        net1.setInput(blob)
+        outs1 = net1.forward(get_output_layers(net1))
+        class_ids = []
+        confidences = []
+        boxes = []
+        conf_threshold = 0.5
+        nms_threshold = 0.4
+        for out in outs:
+            for detection in out:
+                scores = detection[5:]
+                class_id = np.argmax(scores)
+                confidence = scores[class_id]
+                if confidence > 0.5:
+                    center_x = int(detection[0] * Width)
+                    center_y = int(detection[1] * Height)
+                    w = int(detection[2] * Width)
+                    h = int(detection[3] * Height)
+                    x = center_x - w / 2
+                    y = center_y - h / 2
+                    class_ids.append(class_id)
+                    confidences.append(float(confidence))
+                    boxes.append([x, y, w, h])
 
-    indices = cv.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
-    postprocess(image, outs1)
+        indices = cv.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
+        postprocess(image, outs1)
 
-    final = 0
-    num_helmets = 0
+        final = 0
+        num_helmets = 0
 
-    for i in indices:
-        i = i[0]
-        box = boxes[i]
-        x = box[0]
-        y = box[1]
-        w = box[2]
-        h = box[3]
-        is_safe = "SAFE"
+        for i in indices:
+            i = i[0]
+            box = boxes[i]
+            x = box[0]
+            y = box[1]
+            w = box[2]
+            h = box[3]
+            is_safe = "SAFE"
+            
+
+            if class_ids[i] == 0:
+                final += 1
+                
+                for k in helmets:
+                    if k[0] >= x and k[0] + k[2] <= x + w:
+                        num_helmets += 1
+
+                if num_helmets < final:
+                    is_safe = "UNSAFE"
+
+                    unsafe_i = 0
+                    for ii in range(0, len(lx)):
+                        if abs(x - lx[ii]) + abs(y, - ly[ii]) < abs(x - lx[unsafe_i]) + abs(y - ly[unsafe_i]):
+                            unsafe_i = ii 
+                    # cv.imshow("UNSAFE LICENSE PLATE", license_plate_images[unsafe_i])
+                cv.waitKey()
+                cv.destroyAllWindows()
+
+                
+                draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h), is_safe)
+
         
+        print(image)
+        import base64
+        # import io
+        # my_stringIObytes = io.BytesIO()
+        # my_stringIObytes = cv.imencode('.jpg', image)
+        # my_stringIObytes.seek(0)
+        # img = base64.b64encode(my_stringIObytes.read())
+        img = base64.b64encode(image)
+        print(img)
 
-        if class_ids[i] == 0:
-            final += 1
-            
-            for k in helmets:
-                if k[0] >= x and k[0] + k[2] <= x + w:
-                    num_helmets += 1
-
-            if num_helmets < final:
-                is_safe = "UNSAFE"
-
-                unsafe_i = 0
-                for ii in range(0, len(lx)):
-                    if abs(x - lx[ii]) + abs(y, - ly[ii]) < abs(x - lx[unsafe_i]) + abs(y - ly[unsafe_i]):
-                        unsafe_i = ii 
-                cv.imshow("UNSAFE LICENSE PLATE", license_plate_images[unsafe_i])
-            cv.waitKey()
-            cv.destroyAllWindows()
-
-            
-            draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h), is_safe)
-
-    cv.imwrite("output.jpg", image)
-
-    if num_helmets > final:
-        return [final, final]
-    return [final, num_helmets]
+        if num_helmets > final:
+            return img, [final, final]
+        return img, [final, num_helmets]
 
 
 
 
-print(predict("input1.jpg"))
+# print(predict("input1.jpg"))
