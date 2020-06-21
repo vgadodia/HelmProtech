@@ -5,7 +5,11 @@ import numpy as np
 import os.path
 from glob import glob
 from detectLicensePlateImage import get_coordinates
-import tensorflow as tf
+import warnings
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
+warnings.filterwarnings("ignore")
 
 frame_count = 0
 frame_count_out=0
