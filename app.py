@@ -11,6 +11,7 @@ import os
 import pathlib
 import hashlib
 from yolo import predict
+import cv2 as cv
 
 app = Flask(__name__)
 
@@ -32,7 +33,7 @@ def upload():
 def getupload():
     global image, motor, helmet
     if request.method == "POST":
-        try:
+        # try:
             memory = request.files['memory']
             description = request.form['description']
             print(memory.filename == "", description == "")
@@ -58,8 +59,8 @@ def getupload():
             else:
                 print("Four")
                 return render_template('upload.html', errorMessage="Please either upload a photo or link a url")
-        except:
-            return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
+        # except:
+        #     return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
     return redirect("/results")
 
 @app.route('/results')
@@ -70,15 +71,18 @@ def results():
     #         return render_template('Results.html', errorMessage="", image=url_for('file', filename=memory["file"]))
     
     # image = image.decode("utf-8")
-    image = image.decode("utf-8")
+    # image = image.decode("utf-8")
     print(image)
     try:
         thing = helmet/motor*100
     except: thing = 0
-    try:
-        return render_template('results.html', memory_vs_time_rf = image, perfect_rate=thing, forget_rate=motor-helmet)
-    except:
-        return render_template('results.html')
+    retval, buffer = cv.imencode('.png', image)
+    response = make_response(buffer.tobytes())
+    # return response
+    # try:
+    return render_template('results.html', memory_vs_time_rf = url_for("static", filename="new_output.jpg"), perfect_rate=thing, forget_rate=motor-helmet)
+    # except:
+    #     return render_template('results.html')
 
 # @app.route('/contact')
 # def contact():

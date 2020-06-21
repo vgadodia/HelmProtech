@@ -238,8 +238,8 @@ def predict(image_path):
                 
                 draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h), is_safe)
 
-        
-        print(image)
+        cv.imwrite("static/new_output.jpg", image)
+        # print(image)
         import base64
         # import io
         # my_stringIObytes = io.BytesIO()
@@ -250,8 +250,8 @@ def predict(image_path):
         print(img)
 
         if num_helmets > final:
-            return img, [final, final]
-        return img, [final, num_helmets]
+            return image, [final, final]
+        return image, [final, num_helmets]
 
 
 
