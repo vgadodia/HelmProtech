@@ -229,10 +229,3 @@ def predict(image_path):
     if num_helmets > final:
         return image, final, final
     return image, final, num_helmets
-<<<<<<< HEAD
-=======
-
-print(predict("input.jpg"))
-predict("input1.jpg")
-
->>>>>>> e713eccdb846c591cecc2106606f0a8bb56e1eb0
