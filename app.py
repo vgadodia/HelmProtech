@@ -25,25 +25,29 @@ def upload():
 @app.route('/upload', methods=['GET', 'POST'])
 def getupload():
     if request.method == "POST":
-        memory = request.files['memory']
-        if memory.filename == "":
-            return render_template('upload.html', errorMessage="You must upload a photo")
-        else:
-            # print(description)
-            # print(EMAIL)
-            print(memory.filename)
-    return redirect("/upload")
+        try:
+            memory = request.files['memory']
+            description = request.form['description']
+            if memory.filename == "" and description == "":
+                return render_template('upload.html', errorMessage="Please either upload a photo or link a url")
+            elif memory.filename != "" and description != "":
+                return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
+            else:
+                print(memory.filename)
+        except:
+            return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
+    return redirect("/Results")
 
-@app.route('/redescribe')
-def redescribe():
+@app.route('/Results')
+def Results():
     # for memory in image:
     #     if len(memory["new sentences"]) == 0:
-    #         return render_template('redescribe.html', errorMessage="", image=url_for('file', filename=memory["file"]))
-    return render_template('redescribe.html')
+    #         return render_template('Results.html', errorMessage="", image=url_for('file', filename=memory["file"]))
+    return render_template('Results.html')
 
-@app.route('/contact')
-def contact():
-    return render_template('contact.html')
+# @app.route('/contact')
+# def contact():
+#     return render_template('contact.html')
 
 
 @app.errorhandler(404)
