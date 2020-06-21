@@ -33,7 +33,7 @@ def upload():
 def getupload():
     global image, motor, helmet
     if request.method == "POST":
-        # try:
+        try:
             memory = request.files['memory']
             description = request.form['description']
             print(memory.filename == "", description == "")
@@ -59,8 +59,8 @@ def getupload():
             else:
                 print("Four")
                 return render_template('upload.html', errorMessage="Please either upload a photo or link a url")
-        # except:
-        #     return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
+        except:
+            return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
     return redirect("/results")
 
 @app.route('/results')
