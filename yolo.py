@@ -230,4 +230,6 @@ def predict(image_path):
         return image, final, final
     return image, final, num_helmets
 
+print(predict("input.jpg"))
 predict("input1.jpg")
+
