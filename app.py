@@ -52,7 +52,7 @@ def getupload():
                 print("Two")
                 print(memory.filename)
                 print("here1")
-                image, mot, hel = predict("input1.jpg")
+                image, mot, hel = predict(memory.filename)
                 print("here2")
                 motor+=mot
                 helmet+=hel
