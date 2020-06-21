@@ -36,14 +36,14 @@ def getupload():
                 print(memory.filename)
         except:
             return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
-    return redirect("/Results")
+    return redirect("/results")
 
-@app.route('/Results')
-def Results():
+@app.route('/results')
+def results():
     # for memory in image:
     #     if len(memory["new sentences"]) == 0:
     #         return render_template('Results.html', errorMessage="", image=url_for('file', filename=memory["file"]))
-    return render_template('Results.html')
+    return render_template('results.html')
 
 # @app.route('/contact')
 # def contact():
@@ -56,4 +56,4 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="127.0.0.1", port=8080, debug=True)
