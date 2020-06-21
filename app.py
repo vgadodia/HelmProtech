@@ -75,7 +75,10 @@ def results():
     try:
         thing = helmet/motor*100
     except: thing = 0
-    return render_template('results.html', memory_vs_time_rf = image, perfect_rate=thing, forget_rate=motor-helmet)
+    try:
+        return render_template('results.html', memory_vs_time_rf = image, perfect_rate=thing, forget_rate=motor-helmet)
+    except:
+        return render_template('results.html')
 
 # @app.route('/contact')
 # def contact():
