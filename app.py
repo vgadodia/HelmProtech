@@ -51,7 +51,9 @@ def getupload():
             elif memory.filename != "":
                 print("Two")
                 print(memory.filename)
-                image, mot, hel = predict(memory.filename)
+                print("here1")
+                image, mot, hel = predict("input1.jpg")
+                print("here2")
                 motor+=mot
                 helmet+=hel
                 print(memory.filename)

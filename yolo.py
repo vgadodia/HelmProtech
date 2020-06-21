@@ -243,3 +243,5 @@ def predict(image_path):
     if num_helmets > final:
         return image, final, final
     return image, final, num_helmets
+
+predict("input1.jpg")
