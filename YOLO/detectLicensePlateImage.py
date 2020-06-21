@@ -40,31 +40,19 @@ def get_plate(image_path):
     ratio = float(max(vehicle.shape[:2])) / min(vehicle.shape[:2])
     side = int(ratio * Dmin)
     bound_dim = min(side, Dmax)
-    _ , LpImg, _, cor = detect_lp(wpod_net, vehicle, bound_dim, lp_threshold=0.5)
-    return vehicle, LpImg, cor
+    _ , LpImg, _, cor, final_x, final_y = detect_lp(wpod_net, vehicle, bound_dim, lp_threshold=0.5)
+    return vehicle, LpImg, cor, final_x, final_y
 
+def get_coordinates(image_path):
+    vehicle, LpImg,cor, final_x, final_y = get_plate(image_path)
+    return LpImg, final_x, final_y
 
-######
-# PLOT
-######
+"""print("Detect %i plate(s) in"%len(LpImg),splitext(basename(image_path))[0])
 
-image_path = "Plate_examples/multiple_plates.png"
-vehicle, LpImg,cor = get_plate(image_path)
-
-print("Detect %i plate(s) in"%len(LpImg),splitext(basename(image_path))[0])
-
-# Visualize the original image
 for i in range(len(LpImg)):
-    plt.figure(figsize=(6,4))
-    plt.axis(False)
-    plt.imshow(LpImg[i])
+    
+    cv2.imshow('Output', LpImg[i])
+    cv2.waitKey()
+    cv2.destroyAllWindows()"""
 
-# plt.figure(figsize=(10,5))
-# plt.axis(False)
-# plt.imshow(LpImg[1])
-
-# plt.figure(figsize=(10,5))
-# plt.axis(False)
-# plt.imshow(LpImg[0])
-
-plt.show()
+#plt.show()

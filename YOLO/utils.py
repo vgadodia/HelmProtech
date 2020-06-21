@@ -141,6 +141,7 @@ def reconstruct(I, Iresized, Yr, lp_threshold):
     labels = []
     labels_frontal = []
 
+
     for i in range(len(xx)):
         x, y = xx[i], yy[i]
         affine = Affines[x, y]
@@ -176,26 +177,40 @@ def reconstruct(I, Iresized, Yr, lp_threshold):
 
     TLp = []
     Cor = []
+
+    final_x = []
+    final_y = []
+
     if len(final_labels):
         final_labels.sort(key=lambda x: x.prob(), reverse=True)
         for _, label in enumerate(final_labels):
             t_ptsh = getRectPts(0, 0, out_size[0], out_size[1])
+
+            
+
             ptsh = np.concatenate((label.pts * getWH(I.shape).reshape((2, 1)), np.ones((1, 4))))
+
+            final_x.append(float(ptsh[0][0]))
+            final_y.append(float(ptsh[1][0]))
             H = find_T_matrix(ptsh, t_ptsh)
             Ilp = cv2.warpPerspective(I, H, out_size, borderValue=0)
             TLp.append(Ilp)
             Cor.append(ptsh)
-    return final_labels, TLp, lp_type, Cor
+
+    print(final_x)
+    print(final_y)
+    return final_labels, TLp, lp_type, Cor, final_x, final_y
 
 def detect_lp(model, I, max_dim, lp_threshold):
     min_dim_img = min(I.shape[:2])
     factor = float(max_dim) / min_dim_img
     w, h = (np.array(I.shape[1::-1], dtype=float) * factor).astype(int).tolist()
+
     Iresized = cv2.resize(I, (w, h))
     T = Iresized.copy()
     T = T.reshape((1, T.shape[0], T.shape[1], T.shape[2]))
     Yr = model.predict(T)
     Yr = np.squeeze(Yr)
     #print(Yr.shape)
-    L, TLp, lp_type, Cor = reconstruct(I, Iresized, Yr, lp_threshold)
-    return L, TLp, lp_type, Cor
+    L, TLp, lp_type, Cor, final_x, final_y = reconstruct(I, Iresized, Yr, lp_threshold)
+    return L, TLp, lp_type, Cor, final_x, final_y
