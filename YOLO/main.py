@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import os.path
 from glob import glob
+from detectLicensePlateImage import get_coordinates
 
 frame_count = 0
 frame_count_out=0
@@ -13,6 +14,7 @@ inpWidth = 416
 inpHeight = 416
 
 helmets = []
+
 
 classesFile = "obj.names";
 classes = None
@@ -148,15 +150,8 @@ def postprocess(frame, outs):
             count_person += 1
 
 
-def within(x, y, width, height, x1, y1):
-    '''
-    x, y, width, height --> motorcycle box
-    x1, y1 --> coordinates of the plate
-    '''
-    return x <= x1 and x1 <= x+width and y <= y1 and y1 < y+height
-
 def predict(image_path):
-
+    license_plate_images, lx, ly = get_coordinates(image_path)
     frame_count = 0
     frame_count_out=0
     confThreshold = 0.5
@@ -165,6 +160,8 @@ def predict(image_path):
     inpHeight = 416
     global helmets
     helmets = []
+
+
 
     image = cv.imread(image_path)
     Width = image.shape[1]
@@ -226,6 +223,14 @@ def predict(image_path):
             if num_helmets < final:
                 is_safe = "UNSAFE"
 
+                unsafe_i = 0
+                for ii in range(0, len(lx)):
+                    if abs(x - lx[ii]) + abs(y, - ly[ii]) < abs(x - lx[unsafe_i]) + abs(y - ly[unsafe_i]):
+                        unsafe_i = ii 
+                cv.imshow("UNSAFE LICENSE PLATE", license_plate_images[unsafe_i])
+            cv.waitKey()
+            cv.destroyAllWindows()
+
             
             draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h), is_safe)
 
@@ -235,4 +240,7 @@ def predict(image_path):
         return [final, final]
     return [final, num_helmets]
 
-print(predict("input.jpg"))
+
+
+
+print(predict("input1.jpg"))
