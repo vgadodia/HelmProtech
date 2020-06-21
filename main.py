@@ -53,7 +53,10 @@ def getupload():
                 print(memory.filename)
                 print("here1")
                 image, mot, hel = predict(memory.filename)
+<<<<<<< HEAD:app.py
                 cv.imwrite("/static/new_output.jpg", image)
+=======
+>>>>>>> e713eccdb846c591cecc2106606f0a8bb56e1eb0:main.py
                 print("here2")
                 motor+=mot
                 helmet+=hel
