@@ -4,9 +4,6 @@ import sys
 import numpy as np
 import os.path
 from glob import glob
-from detectLicensePlateImage import get_coordinates
-import tensorflow as tf
-import base64
 
 frame_count = 0
 frame_count_out=0
@@ -16,6 +13,7 @@ inpWidth = 416
 inpHeight = 416
 
 helmets = []
+
 
 classesFile = "obj.names";
 classes = None
@@ -93,7 +91,8 @@ def drawPred(image, classId, conf, left, top, right, bottom):
 
     label_name,label_conf = label.split(':')
     if label_name == 'Helmet':
-        
+        #cv.rectangle(image, (left, top - round(1.5*labelSize[1])), (left + round(1.5*labelSize[0]), top + baseLine), (255, 255, 255), cv.FILLED)
+        #cv.putText(image, label, (left, top), cv.FONT_HERSHEY_SIMPLEX, 0.75, (0,0,0), 1)
         frame_count+=1
 
     if(frame_count> 0):
@@ -152,7 +151,6 @@ def postprocess(frame, outs):
 
 def predict(image_path):
     
-    license_plate_images, lx, ly = get_coordinates(image_path)
     frame_count = 0
     frame_count_out=0
     confThreshold = 0.5
@@ -212,11 +210,11 @@ def predict(image_path):
         w = box[2]
         h = box[3]
         is_safe = "SAFE"
-            
+        
 
         if class_ids[i] == 0:
             final += 1
-                
+            
             for k in helmets:
                 if k[0] >= x and k[0] + k[2] <= x + w:
                     num_helmets += 1
@@ -224,22 +222,12 @@ def predict(image_path):
             if num_helmets < final:
                 is_safe = "UNSAFE"
 
-                unsafe_i = 0
-                for ii in range(0, len(lx)):
-                    if abs(x - lx[ii]) + abs(y, - ly[ii]) < abs(x - lx[unsafe_i]) + abs(y - ly[unsafe_i]):
-                        unsafe_i = ii 
-                    # cv.imshow("UNSAFE LICENSE PLATE", license_plate_images[unsafe_i])
-                #cv.waitKey()
-                #cv.destroyAllWindows()
-
-                
             draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h), is_safe)
 
     cv.imwrite("static/new_output.jpg", image)
-        
-    img = base64.b64encode(image)
-        
 
     if num_helmets > final:
         return image, final, final
     return image, final, num_helmets
+
+print(predict("input.jpg"))
