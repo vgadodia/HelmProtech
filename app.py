@@ -36,7 +36,7 @@ def getupload():
                 print(memory.filename)
         except:
             return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
-    return redirect("/upload")
+    return redirect("/Results")
 
 @app.route('/Results')
 def Results():
