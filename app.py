@@ -12,6 +12,7 @@ import pathlib
 import hashlib
 from yolo import predict
 import cv2 as cv
+import warnings
 
 app = Flask(__name__)
 
@@ -33,6 +34,11 @@ def upload():
 def getupload():
     global image, motor, helmet
     if request.method == "POST":
+        # memory = request.files['memory']
+        # image, mot, hel = predict(memory.filename)
+        # motor+=mot
+        # helmet+=hel
+        # return redirect('/upload')
         try:
             memory = request.files['memory']
             description = request.form['description']
@@ -49,6 +55,7 @@ def getupload():
                 motor+=mot
                 helmet+=hel
                 print(memory.filename)
+                print("END")
             elif description != "":
                 print("Three")
                 print(description)
@@ -60,6 +67,7 @@ def getupload():
                 print("Four")
                 return render_template('upload.html', errorMessage="Please either upload a photo or link a url")
         except:
+            print("EXCEPT")
             return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
     return redirect("/results")
 
