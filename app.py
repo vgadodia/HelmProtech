@@ -52,7 +52,8 @@ def getupload():
                 print("Two")
                 print(memory.filename)
                 print("here1")
-                image, mot, hel = predict("input1.jpg")
+                image, mot, hel = predict(memory.filename)
+                cv.imwrite("/static/new_output.jpg", image)
                 print("here2")
                 motor+=mot
                 helmet+=hel
@@ -76,28 +77,15 @@ def getupload():
 @app.route('/results')
 def results():
     global image, motor, helmet
-    # for memory in image:
-    #     if len(memory["new sentences"]) == 0:
-    #         return render_template('Results.html', errorMessage="", image=url_for('file', filename=memory["file"]))
     
-    # image = image.decode("utf-8")
-    # image = image.decode("utf-8")
     print(image)
+
     try:
         thing = helmet/motor*100
     except: thing = 0
-    # retval, buffer = cv.imencode('.png', image)
-    # response = make_response(buffer.tobytes())
-    # return response
-    # try:
-    return render_template('results.html', memory_vs_time_rf = url_for("static", filename="new_output.jpg"), perfect_rate=thing, forget_rate=motor-helmet)
-    # except:
-    #     return render_template('results.html')
-
-# @app.route('/contact')
-# def contact():
-#     return render_template('contact.html')
-
+    
+    return render_template('results.html', memory_vs_time_rf = "/static/new_output.jpg", perfect_rate=thing, forget_rate=motor-helmet)
+    
 
 @app.errorhandler(404)
 def page_not_found(e):

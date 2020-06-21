@@ -23,7 +23,7 @@ with open(classesFile, 'rt') as f:
 modelConfiguration = "yolov3-obj.cfg";
 modelWeights = "yolov3-obj_2400.weights";
 
-args = ['yolov3.txt','yolov3.cfg', 'bike2.jpg','yolov3.weights']
+args = ['yolov3.txt','yolov3.cfg', '','yolov3.weights']
 
 net = cv.dnn.readNet(args[3], args[1])
 net1 = cv.dnn.readNetFromDarknet(modelConfiguration, modelWeights)
@@ -224,14 +224,8 @@ def predict(image_path):
 
             draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h), is_safe)
 
-    cv.imwrite("static/new_output.jpg", image)
+    cv.imwrite("/static/new_output.jpg", image)
 
     if num_helmets > final:
         return image, final, final
     return image, final, num_helmets
-
-<<<<<<< HEAD
-print(predict("input.jpg"))
-=======
-predict("input1.jpg")
->>>>>>> 98a7a3005dc5a216868569de89373e568d97a293
