@@ -14,8 +14,6 @@ from yolo import predict
 import cv2 as cv
 import warnings
 
-warnings.filterwarnings("ignore")
-
 app = Flask(__name__)
 
 image = ""
