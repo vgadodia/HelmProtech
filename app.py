@@ -25,13 +25,17 @@ def upload():
 @app.route('/upload', methods=['GET', 'POST'])
 def getupload():
     if request.method == "POST":
-        memory = request.files['memory']
-        if memory.filename == "":
-            return render_template('upload.html', errorMessage="You must upload a photo")
-        else:
-            # print(description)
-            # print(EMAIL)
-            print(memory.filename)
+        try:
+            memory = request.files['memory']
+            description = request.form['description']
+            if memory.filename == "" and description == "":
+                return render_template('upload.html', errorMessage="Please either upload a photo or link a url")
+            elif memory.filename != "" and description != "":
+                return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
+            else:
+                print(memory.filename)
+        except:
+            return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
     return redirect("/upload")
 
 @app.route('/redescribe')
