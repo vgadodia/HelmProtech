@@ -38,16 +38,16 @@ def getupload():
             return render_template('upload.html', errorMessage="Please either upload a photo or link a url.")
     return redirect("/upload")
 
-@app.route('/redescribe')
-def redescribe():
+@app.route('/Results')
+def Results():
     # for memory in image:
     #     if len(memory["new sentences"]) == 0:
-    #         return render_template('redescribe.html', errorMessage="", image=url_for('file', filename=memory["file"]))
-    return render_template('redescribe.html')
+    #         return render_template('Results.html', errorMessage="", image=url_for('file', filename=memory["file"]))
+    return render_template('Results.html')
 
-@app.route('/contact')
-def contact():
-    return render_template('contact.html')
+# @app.route('/contact')
+# def contact():
+#     return render_template('contact.html')
 
 
 @app.errorhandler(404)
