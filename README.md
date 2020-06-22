@@ -10,10 +10,15 @@ The app is currently deployed to Google Cloud Platform here: https://helmprotech
 ## Screenshots 
 
 This is a sneak peek at our landing page. We describe our mission, function, and how the entire software package works. 
+
 ![](landing.png)
+
 This is where users can try it out for themselves and either upload an image or enter an image URL.
+
 ![](upload.png)
+
 Upon uploading an image, users will be prompted to the results page in which this is one of the output that will be shown, a clear analyziation of the image and whether or not the rider is safe and if they have on the proper gear for protection.
+
 ![](objectDetect.png)
 
 ## Features
