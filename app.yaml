@@ -1,6 +1,7 @@
 runtime: python37
-entrypoint: gunicorn -b :8080 -w 2 main:app
+# entrypoint: gunicorn -b :8080 -w 2 main:app
 # entrypoint: gunicorn -b localhost:8000 -k gevent main:app
+entrypoint: gunicorn -b :$PORT -w 2 main:app
 
 instance_class: F4_HIGHMEM
 
