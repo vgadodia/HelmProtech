@@ -5,7 +5,7 @@ A link to our devpost submission can be found here: https://devpost.com/software
 
 A link to our YouTube demo video can be found here: https://youtu.be/1SbBZqdJNU0
 
-The app is currently deployed to Google Cloud Platform via App Engine and the link is here: https://helmprotech.uk.r.appspot.com/
+The app is currently deployed to Google Cloud Platform here: https://helmprotech.uk.r.appspot.com/
 
 ## Screenshots 
 
