@@ -56,6 +56,9 @@ In addition, we created an accompanying web application using Flask, HTML, CSS, 
 * [JavaScript](https://www.javascript.com/)
 * [HTML5](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
 
+## Model
+
+Since our machine learning model files were too large to upload directly on GitHub, we uploaded them on Google Drive and anyone can view them. Simple go to the following link and download the two model files and put them in the same directory as `yolo.py`. The link can be found here: https://drive.google.com/drive/folders/14T1uJKfgjzyrUZ81dwg5Sxee44Vcs5Ln?usp=sharing
 
 ## Clone
 
